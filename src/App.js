@@ -1,20 +1,9 @@
 const express = require("express");
 const app = express();
 
-app.get("/user",(req, res)=>{
+app.get("/user/:id/:name/:pwd",(req, res)=>{
+    console.log(req.params);
     res.send("get call from user")
-})
-
-app.post("/user",(req, res)=>{
-    res.send("post call from user")
-})
-
-app.put("/user",(req, res)=>{
-    res.send("put call from user")
-})
-
-app.delete("/user",(req, res)=>{
-    res.send("delete call from user")
 })
 
 app.use("/",(req, res)=>{
