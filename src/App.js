@@ -5,19 +5,49 @@ const app = express();
 
 
 app.use(express.json());
+
+
+// to post some data to the database
 app.post("/signup", async (req, res) => {
 // console.log(req.body)
   //creating a new instance of the User model
   const user = new User(req.body);      // data is written in the postman to call a api, when called data is sent as request and recieved by server, then new instance is made and then saved to database
-
   try {
     await user.save();
-    res.send("User created successfully");
+    res.send("User created successfully"); 
   } catch (err) {
     console.log(err);
     res.send("User not created");
   }
 });
+
+
+// to get some data from the database, to get single user using emailid
+app.get("/user",async (req, res)=>{
+const userEmail = req.body.email;
+try{
+  const user = await User.find({email:userEmail})
+  if(user.length===0){
+    res.status(404).send("User not found");
+  }
+  res.status(200).send(user);
+}catch(err){
+  console.log(err);
+  res.status(500).send("User not found");
+}
+});
+
+// to get data from database, to get all users
+
+app.get("/feed",async (req,res)=>{
+  try {
+    const users = await User.find({})
+    res.status(200).send(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Users not found");
+  }
+})
 
 connectDB()
   .then(() => {
