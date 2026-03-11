@@ -26,7 +26,7 @@ app.post("/signup", async (req, res) => {
 app.get("/user",async (req, res)=>{
 const userEmail = req.body.email;
 try{
-  const user = await User.find({email:userEmail})
+  const user = await User.findOne({email:userEmail})
   if(user.length===0){
     res.status(404).send("User not found");
   }
@@ -38,7 +38,6 @@ try{
 });
 
 // to get data from database, to get all users
-
 app.get("/feed",async (req,res)=>{
   try {
     const users = await User.find({})
@@ -48,6 +47,21 @@ app.get("/feed",async (req,res)=>{
     res.status(500).send("Users not found");
   }
 })
+
+//to delete data from DB
+app.delete("/user", async(req,res)=>{
+  const userId = req.body.userId;
+  try {
+    const user = await User.findByIdAndDelete(userId)
+    res.send("user deleted successfully") 
+  } catch (error) {
+    console.log(error);
+    res.send("user not deleted")
+  }
+})
+
+
+
 
 connectDB()
   .then(() => {
