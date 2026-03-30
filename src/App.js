@@ -15,7 +15,7 @@ app.post("/signup", async (req, res) => {
     res.send("User created successfully");
   } catch (err) {
     console.log(err);
-    res.send(`User not created ${err}`);
+    res.send(`User not created  ${err}`);
   }
 });
 
