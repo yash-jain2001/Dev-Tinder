@@ -40,9 +40,11 @@ const userSchema = new mongoose.Schema({
         default:"this is about section"
     },
     skills:{
-        type: [String]
+        type: [String],
+        max:10
        }
-});
+},
+{timestamps:true});
 
 const User = mongoose.model("User",userSchema);
 module.exports = User;
