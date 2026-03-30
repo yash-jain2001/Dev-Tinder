@@ -17,7 +17,7 @@ app.post("/signup", async (req, res) => {
     res.send("User created successfully"); 
   } catch (err) {
     console.log(err);
-    res.send("User not created");
+    res.send(`User not created ${err}`);
   }
 });
 
@@ -67,6 +67,7 @@ app.patch("/user", async (req, res)=>{
   try{
     await User.findByIdAndUpdate({_id: userId}, data);
     res.send("user updated successfully");
+    runValidators:true
   }catch(err){
     res.send("something went wrong")
   }
