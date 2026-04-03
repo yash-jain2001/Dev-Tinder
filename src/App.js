@@ -2,20 +2,39 @@ const express = require("express");
 const connectDB = require("./config/database.js");
 const User = require("./models/user");
 const app = express();
+const validateSignUpData = require("./utils/validation");
+const bcrypt = require("bcrypt");
 
 app.use(express.json());
 
 // to post some data to the database
 app.post("/signup", async (req, res) => {
-  // console.log(req.body)
-  //creating a new instance of the User model
-  const user = new User(req.body); // data is written in the postman to call a api, when called data is sent as request and recieved by server, then new instance is made and then saved to database
   try {
+  // console.log(req.body)
+  const {firstName,lastName,email,password,age,gender,skills} = req.body;
+
+// validation of the data
+  validateSignUpData(req);
+
+// encrypt the password
+const passwordHash =await bcrypt.hash(password,10)
+console.log(passwordHash);
+
+  //creating a new instance of the User model
+  const user = new User({
+    firstName,
+    lastName,
+    email,
+    password:passwordHash,
+    age,
+    gender,
+    skills
+  }); // data is written in the postman to call a api, when called data is sent as request and recieved by server, then new instance is made and then saved to database
     await user.save();
     res.send("User created successfully");
   } catch (err) {
     console.log(err);
-    res.send(`User not created  ${err}`);
+    res.send(`User not created, Error: ${err}`);
   }
 });
 
