@@ -30,15 +30,27 @@ const validateSignUpData = (req) => {
   if (age < 18 || age >= 60) {
     throw new Error("your age doesnt suits to use Dev Tinder");
   }
-  if(!["male","female","others"].includes(gender)){
-    throw new Error("Invalid gender")
+  if (!["male", "female", "others"].includes(gender)) {
+    throw new Error("Invalid gender");
   }
-  if(skills.length >10){
-    throw new Error("skills should not be more than 10")
+  if (skills.length > 10) {
+    throw new Error("skills should not be more than 10");
   }
-  if(skills.length === 0){
-    throw new Error("skills should not be empty")
+  if (skills.length === 0) {
+    throw new Error("skills should not be empty");
   }
 };
 
-module.exports = validateSignUpData;
+const validateEditProfileData = (req) => {
+  const allowedEditFields = [
+    "firstName",
+    "lastName",
+    "age",
+    "gender",
+    "skills",
+    "about",
+  ];
+  return Object.keys(req.body).every((field) => allowedEditFields.includes(field));
+};
+
+module.exports = { validateSignUpData, validateEditProfileData };
