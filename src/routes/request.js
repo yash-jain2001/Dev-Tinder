@@ -13,6 +13,7 @@ requestRouter.post(
       const toUserId = req.params.toUserId;
       const status = req.params.status;
       
+      //request sender only send interested or ignored request
       const allowedStatus = ["ignored", "interested"];
       if (!allowedStatus.includes(status)) {
         return res
@@ -24,6 +25,7 @@ requestRouter.post(
         return res.status(400).json({message:"you can not send connection request to yourself"})
       }
 
+      //check if the user is valid or not(located in DB or not )
       const toUser = await User.findById(toUserId);
       if(!toUser){
         return res.status(404).json({message:"user not found"})
@@ -63,4 +65,35 @@ requestRouter.post(
   },
 );
 
+requestRouter.post("/request/review/:status/:requestId",userAuth, async(req,res)=>{
+  try {
+    const loggedinUser = req.user
+    const {status,requestId} = req.params
+
+    //allowed status
+    const allowedStatus = ["accepted","rejected"]
+    if(!allowedStatus.includes(status)){
+      return res.status(400).json({message:"Status not allowed"})
+    }
+
+    const validConnectionRequest = await ConnectionRequest.findOne({
+      _id: requestId,
+      toUserId: loggedinUser._id,
+      status: "interested"
+    })
+    if(!validConnectionRequest){
+      res.status(404).json({message:"invalid request"})
+    }
+
+    validConnectionRequest.status = status
+    const data = await validConnectionRequest.save()
+    res.json({
+      message:"Connection request "+status,
+      data
+    })
+    
+  } catch (err) {
+    res.status(400).send("ERROR: "+ err.message);
+  }
+}) 
 module.exports = requestRouter;
