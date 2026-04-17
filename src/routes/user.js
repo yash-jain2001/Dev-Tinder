@@ -2,6 +2,7 @@ const express = require("express");
 const userRouter = express.Router();
 const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
+const User = require("../models/user");
 
 //get all the pending requests for loggedin user
 userRouter.get("/user/requests/recieved", userAuth, async (req, res) => {
@@ -51,5 +52,32 @@ userRouter.get("/user/myconnections", userAuth, async (req, res) => {
     res.status(400).send("ERROR: " + err.message);
   }
 });
+
+userRouter.get("/feed", userAuth, async(req,res)=>{
+  try{
+     const loggedinUser = req.user;
+     //find all connections requests (sent and recieved)
+     const connectionRequests = await ConnectionRequest.find({
+      $or:[{fromUserId: loggedinUser._id},{toUserId:loggedinUser._id}]
+     }).select("fromUserId toUserId");
+
+     const hideUsersFromFeed = new Set();
+     connectionRequests.forEach((request)=>{
+      hideUsersFromFeed.add(request.fromUserId.toString());
+      hideUsersFromFeed.add(request.toUserId.toString()); 
+     })
+
+     const users = await User.find({
+      $and:[
+        {_id:{$nin: Array.from(hideUsersFromFeed)}},
+        {_id:{$ne: loggedinUser._id}}
+      ]
+    }).select("firstName lastName profilePicture skills") 
+
+res.send(users)
+  }catch(err){
+    res.status(400).send("ERROR: " + err.message)
+  }
+})
 
 module.exports = userRouter;
