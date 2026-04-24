@@ -4,7 +4,7 @@ const validateSignUpData = require("../utils/validation");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
 authRouter.post("/signup", async (req, res) => {
   try {
@@ -55,23 +55,24 @@ authRouter.post("/login", async (req, res) => {
       throw new Error("invalid credentials");
     } else {
       //create JWT token
-      const token = await user.getJWT() ;
+      const token = await user.getJWT();
 
       // add token to cookie and send response back to user
 
-      res.cookie("token", token,{expires:new Date(Date.now()+ 8*3600000)});
-      res.send( user);
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 * 3600000),
+      });
+      res.send(user);
     }
   } catch (err) {
-    res.send("Login failed ERROR: " + err.message);
+    res.status(400).send(err.message);
   }
 });
 
-authRouter.post("/logout", async(req, res)=>{
-  res.cookie ("token",null,{expires:new Date(Date.now())});
+authRouter.post("/logout", async (req, res) => {
+  res.cookie("token", null, { expires: new Date(Date.now())
+  });
   res.send("Logout successfully");
-})
-
-
+});
 
 module.exports = authRouter;
