@@ -77,7 +77,7 @@ userRouter.get("/feed", userAuth, async(req,res)=>{
         {_id:{$nin: Array.from(hideUsersFromFeed)}},
         {_id:{$ne: loggedinUser._id}}
       ]
-    }).select("firstName lastName profilePicture skills").skip((page-1)*limit).limit(limit)
+    }).select("firstName lastName age gender profilePicture skills").skip((page-1)*limit).limit(limit)
 
 res.send(users)
   }catch(err){
