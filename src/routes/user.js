@@ -16,6 +16,10 @@ userRouter.get("/user/requests/recieved", userAuth, async (req, res) => {
       "lastName",
       "profilePicture",
       "skills",
+      "gender",
+      "age",
+      "email",
+      "about"
     ]);
     res.json({
       message: `Connection Requests of ${loggedinUser.firstName} fetched successfully`,
@@ -35,7 +39,7 @@ userRouter.get("/user/myconnections", userAuth, async (req, res) => {
         {toUserId:loggedinUser._id, status:"accepted"},
         {fromUserId:loggedinUser._id, status:"accepted"}
       ]
-    }).populate("fromUserId", ["firstName", "lastName", "profilePicture", "gender", "age", "skills", "email","about"]).populate("toUserId", ["firstName", "lastName", "profilePicture", "gender", "age", "skills", "profileDescription"]);
+    }).populate("fromUserId", ["firstName", "lastName", "profilePicture", "gender", "age", "skills", "email","about"]).populate("toUserId", ["firstName", "lastName", "profilePicture", "gender", "age", "skills", "email", "about"]);
 
     const data = myConnections.map((connection)=>{
         if(connection.fromUserId._id.toString() === loggedinUser._id.toString()){
